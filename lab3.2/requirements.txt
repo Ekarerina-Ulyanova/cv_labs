@@ -1,0 +1,15 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu
+numpy==1.26.4
+scipy==1.11.4
+Pillow==10.4.0
+omegaconf==2.3.0
+einops==0.7.0
+timm==0.9.16
+loralib==0.1.2
+tqdm==4.66.5
+lpips==0.1.4
+piq==0.8.0
+ftfy==6.2.3
+regex==2024.7.24
