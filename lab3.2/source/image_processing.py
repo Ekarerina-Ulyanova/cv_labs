@@ -2,7 +2,7 @@ from io import BytesIO
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter, ImageOps
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 DEGRADATIONS = {
     'bicubic': (0.0, 0.0, None),
@@ -87,15 +87,29 @@ def composite(restored, known_hr, mask_hr):
 
 
 def save_collage(path, rows):
-    size, header, label = 256, 28, 24
+    size, header, label = 256, 30, 50
+    font = ImageFont.truetype('arial.ttf', 14)
+    degradation_titles = {
+        'bicubic': 'Уменьшение разрешения в 4 раза',
+        'blur_noise_jpeg': 'Размытие, шум и JPEG-сжатие',
+        'severe': 'Сильное размытие, шум и JPEG-сжатие',
+    }
     canvas = Image.new('RGB', (size * len(rows[0][1]), (size + header + label) * len(rows)), 'white')
     draw = ImageDraw.Draw(canvas)
     for row, (degradation, panels) in enumerate(rows):
         top = row * (size + header + label)
-        draw.text((6, top + 5), degradation, fill='black')
+        draw.text((6, top + 5), degradation_titles[degradation], fill='black', font=font)
         for column, (title, pixels) in enumerate(panels):
             left = column * size
             image = Image.fromarray(pixels).convert('RGB').resize((size, size), Image.Resampling.NEAREST)
             canvas.paste(image, (left, top + header + label))
-            draw.text((left + 6, top + label + 5), title, fill='black')
+            lines = ['']
+            for word in title.split():
+                candidate = (lines[-1] + ' ' + word).strip()
+                if draw.textlength(candidate, font=font) > size - 12:
+                    lines.append(word)
+                else:
+                    lines[-1] = candidate
+            draw.multiline_text((left + 6, top + header + 3), '\n'.join(lines),
+                                fill='black', font=font, spacing=3)
     canvas.save(path, format='PNG')

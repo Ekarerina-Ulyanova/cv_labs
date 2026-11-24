@@ -53,12 +53,12 @@ def main():
                                  'mode': mode, **scores})
             write_csv(output / 'metrics.csv', rows)
             collage.append((degradation, [
-                ('HR', hr),
-                ('LR', lr_up),
-                ('Mask', mask_hr.astype(np.uint8) * 255),
-                ('SR: LR only / ones', results['ones']),
-                ('Paste HR after SR', results['paste_only']),
-                ('HR during sampling / mixed', results['mixed']),
+                ('Исходное качественное изображение', hr),
+                ('Ухудшенное изображение', lr_up),
+                ('Маска (белое - область восстановления)', mask_hr.astype(np.uint8) * 255),
+                ('Восстановление только по LR', results['ones']),
+                ('Подстановка HR после восстановления', results['paste_only']),
+                ('Восстановление с HR-контекстом', results['mixed']),
             ]))
         save_collage(output / f'{path.stem}.png', collage)
     print(f'Results: {output}', flush=True)
